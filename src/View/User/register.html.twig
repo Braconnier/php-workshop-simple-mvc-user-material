@@ -1,35 +1,42 @@
 {% extends 'Layout/column.html.twig' %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <h1>Register an account</h1>
-            <p>Please fill the form below to create an account.</p>
-            <form action="" method="post">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input class="form-control" type="email" id="email" name="email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input class="form-control" type="password" id="password" name="password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="pseudo" class="form-label">Pseudo</label>
-                    <input class="form-control" type="text" id="pseudo" name="pseudo" required>
-                </div>
-                <div class="mb-3">
-                    <label for="firstname" class="form-label">Firstname</label>
-                    <input class="form-control" type="text" id="firstname" name="firstname" required>
-                </div>
-                <div class="mb-3">
-                    <label for="lastname" class="form-label">Lastname</label>
-                    <input class="form-control" type="text" id="lastname" name="lastname" required>
-                </div>
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-success">Create account</button>
-                </div>
-            </form>
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			<h1>Register an account</h1>
+			<p>Please fill the form below to create an account.</p>
+			<form action="" method="post">
+				<div class="mb-3">
+					<label for="email" class="form-label">Email</label>
+					<input class="form-control" type="email" id="email" name="email" required>
+					{{errors.emptyEmail}}
+					{{errors.badEmailPattern}}
+				</div>
+				<div class="mb-3">
+					<label for="password" class="form-label">Password</label>
+					<input class="form-control" type="password" id="password" name="password" required title="Minimum eight characters, at least one upper case English letter, one lower case English letter, one number and one special character">
+					{{errors.emptyPassword}}
+					{{errors.badPasswordPattern}}
+				</div>
+				<div class="mb-3">
+					<label for="pseudo" class="form-label">Pseudo</label>
+					<input class="form-control" type="text" id="pseudo" name="pseudo" required>
+					{{errors.emptyPseudo}}
+				</div>
+				<div class="mb-3">
+					<label for="firstname" class="form-label">Firstname</label>
+					<input class="form-control" type="text" id="firstname" name="firstname" required>
+					{{errors.emptyFirstname}}
+				</div>
+				<div class="mb-3">
+					<label for="lastname" class="form-label">Lastname</label>
+					<input class="form-control" type="text" id="lastname" name="lastname" required>
+					{{errors.emptyLastname}}
+				</div>
+				<div class="mb-3">
+					<button type="submit" class="btn btn-success">Create account</button>
+				</div>
+			</form>
+		</div>
+	</div>
 {% endblock %}

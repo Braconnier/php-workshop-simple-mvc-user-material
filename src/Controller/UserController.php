@@ -44,26 +44,80 @@ class UserController extends AbstractController
     public function register(): string
     {
         $errors = [];
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
             $newUser = array_map('trim', $_POST);
-            var_dump($newUser);
+
+
+            //password regEx : Minimum eight characters, at least one upper case English letter, one lower case English letter, one number and one special character ("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$""/^\S*(?=.*[a-z])(?=.*A-A)(?=.*\d)(?=\S*[\W])[a-zA-Z\d]{8,}\S*$/")
+            $passwordRegex =  "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/";
+
+            // test for empty email field.
             if (!isset($newUser['email']) || empty($newUser['email'])) {
-                return $errors['emptyEmail'] = 'Please enter an email';
-            }
-            if (!isset($newUser['password']) || empty($newUser['password'])) {
-                return $errors['emptyEmail'] = 'Please enter an email';
+                $errors['emptyEmail'] = 'Please enter an email';
+
+                // test for valid email address
+            } elseif (filter_var($newUser['email'], FILTER_VALIDATE_EMAIL)) {
+
+                //good to send email
+                $newUser['email'] = ['email'];
             } else {
+                $errors['badEmailPattern'] = 'Please enter a valid email address';
+            }
+
+            // test for empty password field
+            if (!isset($newUser['password']) || empty($newUser['password'])) {
+                $errors['emptyPassword'] = 'Please enter an password';
+
+                // test for matching regEx password
+            } elseif (preg_match($passwordRegex, $newUser['password'])) {
+
+                // good to hash and send password (using bcrypt blowfish algorithm encryption)
                 $passwordToHash = $newUser['password'];
-                $hashedPassword = password_hash($passwordToHash, PASSWORD_DEFAULT);
+                $hashedPassword = password_hash($passwordToHash, CRYPT_BLOWFISH);
+                $newUser['password'] = $hashedPassword;
+            } else {
+                $errors['badPasswordPattern'] = 'Please enter a valid password : Minimum eight characters, at least one upper case English letter, one lower case English letter, one number and one special character';
             }
+
+            // test for empty pseudo field
             if (!isset($newUser['pseudo']) || empty($newUser['pseudo'])) {
-                return $errors['emptyPseudo'] = 'Please enter a pseudo';
+                $errors['emptyPseudo'] = 'Please enter a pseudo';
+
+                //good to send pseudo
+            } else {
+                $newUser['pseudo'] = $newUser['pseudo'];
             }
+
+            // test for empty firstname field
             if (!isset($newUser['firstname']) || empty($newUser['firstname'])) {
-                return $errors['emptyFirstname'] = 'Please enter a firstname';
+                $errors['emptyFirstname'] = 'Please enter a firstname';
+
+                //good to send firstname
+            } else {
+                $newUser['firstname'] = $newUser['firstname'];
             }
+
+            // test for empty lastname field
             if (!isset($newUser['lastname']) || empty($newUser['lastname'])) {
-                return $errors['emptyLastname'] = 'Please enter a lastname';
+                $errors['emptyLastname'] = 'Please enter a lastname';
+
+                //good to send lastname
+            } else {
+                $newUser['lastname'] = $newUser['lastname'];
+            }
+
+            if (count($errors) > 0) {
+                return $this->twig->render('User/register.html.twig', ['errors' => $errors]);
+
+                // if all good, send a createUser request
+            } else {
+                $insertUser = new UserManager();
+                $insertUser->createUser($newUser);
+
+                // user created, redirect to login method
+                $this->login();
             }
         }
         return $this->twig->render('User/register.html.twig');
