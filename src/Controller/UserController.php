@@ -75,7 +75,7 @@ class UserController extends AbstractController
 
                 // good to hash and send password (using bcrypt blowfish algorithm encryption)
                 $passwordToHash = $newUser['password'];
-                $hashedPassword = password_hash($passwordToHash, CRYPT_BLOWFISH);
+                $hashedPassword = password_hash($passwordToHash, PASSWORD_DEFAULT);
                 $newUser['password'] = $hashedPassword;
             } else {
                 $errors['badPasswordPattern'] = 'Please enter a valid password : Minimum eight characters, at least one upper case English letter, one lower case English letter, one number and one special character';
